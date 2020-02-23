@@ -1,17 +1,18 @@
 # react-native-file-share-intent
 
-Adds the application to the share intent of the device, so it can be launched from other apps and receive data from them 
+Adds the application to the share intent of the device, so it can be launched from other apps and receive data from them.
 
-
-
+This fork allows all file types to be processed by this module, while previously only image, video and application mime types were supported. Any other file type (such as audio files) would have thrown an error.
 
 ## Installation
 
-* Install the module
+* Install this module
 
 ```bash
-npm i --save react-native-file-share-intent
+npm install --save flo-wolf/react-native-file-share-intent 
 ```
+If that isn't working correctly, check the contents of your .npmignore file.
+Don't panic if the install command takes longer than usual; installing from a git repository is slower than installing from the npm registry.
 
 ### Automatic Installation (React Native 0.36 - 0.59.9)
 
