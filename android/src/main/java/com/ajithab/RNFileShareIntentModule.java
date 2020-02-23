@@ -29,54 +29,54 @@ public class RNFileShareIntentModule extends ReactContextBaseJavaModule {
 
   protected void onNewIntent(Intent intent) {
     Activity mActivity = getCurrentActivity();
-    
+
     if(mActivity == null) { return; }
 
     mActivity.setIntent(intent);
-  }  
+  }
 
   @ReactMethod
   public void getFilepath(Callback successCallback) {
     Activity mActivity = getCurrentActivity();
-    
+
     if(mActivity == null) { return; }
-    
+
     Intent intent = mActivity.getIntent();
     String action = intent.getAction();
     String type = intent.getType();
 
+    Boolean isPlainText = ("text/plain".equals(type));
+
     if (Intent.ACTION_SEND.equals(action) && type != null) {
-      if ("text/plain".equals(type)) {
+      if (isPlainText) {
         String input = intent.getStringExtra(Intent.EXTRA_TEXT);
         successCallback.invoke(input);
-      } else if (type.startsWith("image/") || type.startsWith("video/") || type.startsWith("application/")) {
+      } else {
         Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (fileUri != null) {
           successCallback.invoke(fileUri.toString());
         }
-      }else {
-        Toast.makeText(reactContext, "Type is not support", Toast.LENGTH_SHORT).show();
       }
     } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-        if (type.startsWith("image/") || type.startsWith("video/") || type.startsWith("application/")) {
-          ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-          if (fileUris != null) {
-            String completeString = new String();
-            for (Uri uri: fileUris) {
-              completeString += uri.toString() + ",";
-            }
-            successCallback.invoke(completeString);
+      if (!isPlainText) {
+        ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (fileUris != null) {
+          String completeString = new String();
+          for (Uri uri: fileUris) {
+            completeString += uri.toString() + ",";
           }
-        } else {
-          Toast.makeText(reactContext, "Type is not support", Toast.LENGTH_SHORT).show();
+          successCallback.invoke(completeString);
         }
+      } else {
+        Toast.makeText(reactContext, "Type is not support", Toast.LENGTH_SHORT).show();
+      }
     }
   }
 
   @ReactMethod
   public void clearFilePath() {
     Activity mActivity = getCurrentActivity();
-    
+
     if(mActivity == null) { return; }
 
     Intent intent = mActivity.getIntent();
